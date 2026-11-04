@@ -1,76 +1,125 @@
-Laberinto - Proyecto 2 EIF205
+# Laberinto - Proyecto 2 EIF205
 
-Autores: Bryan Rojas Barrantes y Carlos Andres Romero
+## Información general
 
-Curso: Arquitectura de Computadoras (EIF205)
+**Autores:** Bryan Rojas Barrantes y Carlos Andrés Romero Varela  
+**Curso:** Arquitectura de Computadoras (EIF205)  
+**Universidad:** Universidad Nacional de Costa Rica  
+**Lenguaje:** Ensamblador 8086  
+**Entorno de ejecución:** EMU8086  
+**Modalidad:** Juego de laberinto en modo texto
 
-Entorno objetivo: EMU8086, procesador Intel 8086, modo texto.
+## Descripción del juego
 
-Cómo abrir y ejecutar
+Laberinto es un juego desarrollado en lenguaje ensamblador 8086. El objetivo es recorrer tres laberintos, recoger todas las monedas y encontrar la salida antes de agotar los movimientos disponibles.
 
-1\. Abrir EMU8086.
+El juego incorpora puntuación, récord durante la ejecución, colisiones con paredes, pausa, reinicio, menú principal y condiciones de victoria y derrota.
 
-2\. Ir a File > Open y seleccionar LABERINTO.ASM.
+## Requisitos
 
-3\. Presionar Compile y luego Emulate (según la versión, también puede usarse Run).
+- Tener instalado EMU8086 en Windows.
+- Tener el archivo `LABERINTO.ASM`.
 
-4\. En la ventana del programa, ingresar 1 para jugar o 2 para salir.
+## Cómo compilar y ejecutar
 
-5\. Controlar el personaje con W A S D. Se admiten mayúsculas o minúsculas.
+1. Abrir EMU8086.
+2. Seleccionar **File > Open** y abrir `LABERINTO.ASM`.
+3. Presionar **Compile**.
+4. Si no aparecen errores, seleccionar **Emulate**.
+5. En el menú principal, pulsar `1` para jugar o `2` para salir.
+6. Utilizar `W`, `A`, `S` y `D` para mover al jugador.
 
-Objetivo y reglas
+## Controles
 
-•	@ es el jugador; # son paredes; \* son monedas; E es la salida.
+| Tecla | Acción |
+|---|---|
+| `W` | Arriba |
+| `A` | Izquierda |
+| `S` | Abajo |
+| `D` | Derecha |
+| `P` | Pausar o reanudar |
+| `R` | Reiniciar partida |
+| `Q` | Volver al menú principal |
 
-•	Recoger las 3 monedas y llegar a E para completar el nivel.
+Se admiten letras mayúsculas y minúsculas.
 
-•	Hay 3 niveles predefinidos. Cada nivel comienza con 45 movimientos.
+## Símbolos
 
-•	Un movimiento válido resta 1. Chocar contra una pared NO consume movimientos.
+- `@`: jugador.
+- `#`: pared.
+- `*`: moneda.
+- `E`: salida.
 
-•	Cada moneda suma 10 puntos. Terminar un nivel suma 50 puntos.
+## Reglas
 
-•	Si los movimientos llegan a 0 antes de alcanzar la salida, aparece Game Over.
+- El juego contiene tres niveles.
+- Cada nivel comienza con 45 movimientos disponibles y tres monedas.
+- Cada moneda suma 10 puntos.
+- Para usar la salida `E` es necesario recoger todas las monedas del nivel.
+- Completar un nivel suma 50 puntos adicionales.
+- Un movimiento válido consume una unidad. Los intentos de atravesar una pared no consumen movimientos.
+- Si los movimientos llegan a cero antes de completar el objetivo, aparece Game Over.
+- Al completar el tercer nivel aparece un mensaje de victoria.
+- El récord se mantiene al reiniciar la partida dentro de la misma ejecución, pero no se guarda de forma permanente al cerrar el programa.
 
-•	P: pausar / reanudar. R: comenzar una partida nueva. Q: volver al menú.
+## Características implementadas
 
-•	El récord se mantiene mientras el programa sigue abierto; se pierde al cerrar EMU8086. No se guarda en archivo.
+1. Monedas que suman puntos.
+2. Límite de movimientos por nivel.
+3. Tres mapas para avanzar de manera progresiva.
+4. Pausa, reinicio, récord, menú y pantallas de victoria y derrota.
 
-Tres cambios respecto al laberinto básico
+## Organización del programa
 
-1\. Monedas que suman puntos.
+- `cargar_nivel`: carga el mapa y prepara el nivel.
+- `mostrar_juego`: muestra el tablero y los controles.
+- `mostrar_marcador`: muestra nivel, puntos, récord, movimientos y monedas.
+- `leer_tecla`: lee el teclado.
+- `mover_jugador`: procesa movimiento, colisiones, monedas y salida.
+- `actualizar_record`: actualiza la puntuación máxima.
+- `imprimir_numero`: presenta números decimales.
+- `posicionar_cursor`: coloca el cursor.
+- `pintar_una_celda`: dibuja una casilla.
+- `actualizar_movimiento`: actualiza el jugador y el marcador.
+- `limpiar_pantalla`, `escribir` e `imprimir_caracter`: operaciones de texto.
 
-2\. Límite de movimientos que provoca derrota.
+### Macros
 
-3\. Tres laberintos de dificultad progresiva.
+- `MOSTRAR_TEXTO`: facilita la impresión de cadenas.
+- `SALTO_LINEA`: imprime un salto de línea.
 
-Estructura del programa
+## Organización de memoria
 
-•	cargar\_nivel: copia el mapa seleccionado a memoria y reinicia el jugador, las monedas y los movimientos.
+Los mapas tienen 84 caracteres, distribuidos en 7 filas por 12 columnas. El arreglo `tablero` contiene una copia del mapa activo. El programa mantiene variables para la posición del jugador, nivel, movimientos, monedas, puntos, récord y estado. Utiliza una pila declarada como `.stack 100h` (256 bytes).
 
-•	mostrar\_juego: imprime estado, contador y tablero de 7 x 12.
+## Pruebas realizadas
 
-•	leer\_tecla: recibe el teclado sin mostrar los caracteres.
+La versión del juego fue compilada y ejecutada en EMU8086. Se comprobaron el inicio, movimiento, colisiones, monedas, salida bloqueada, transición de nivel, puntuación, récord, pausa, reinicio, menú, Game Over y victoria.
 
-•	mover\_jugador: calcula la nueva posición y revisa paredes, monedas, salida y Game Over.
+En una prueba completa se obtuvo victoria al terminar los tres niveles con 240 puntos. Después de incorporar las macros, se recompiló el programa y se comprobaron nuevamente movimiento, moneda, pausa y reinicio.
 
-•	actualizar\_record: actualiza el récord si se supera.
+## Control de versiones
 
-•	imprimir\_numero: convierte un número a dígitos decimales para mostrarlo.
+El proyecto utiliza Git y GitHub. El historial contiene contribuciones de los dos integrantes.
 
-•	limpiar\_pantalla, escribir, imprimir\_caracter: utilidades de pantalla.
+**Repositorio:** https://github.com/bryanrojas77/Proyecto2_Laberinto_EIF205
 
-Explicación de memoria
+## Documentación del proyecto
 
-Cada mapa tiene 84 bytes (7 filas × 12 columnas). El índice de un personaje se calcula como fila × 12 + columna. La posición inicial es 13 (fila 1, columna 1). tablero es una copia del mapa: al recoger una moneda, su posición cambia de \* a espacio. puntos y record ocupan 2 bytes; las demás variables de contadores son bytes, excepto posicion, que ocupa 2.
+- [Informe técnico](docs/Informe_Tecnico_Proyecto2.pdf): arquitectura, memoria, módulos y evidencias.
+- [Bitácora de pruebas](docs/Bitacora_Pruebas.md): casos de prueba y resultados observados.
 
-Validación pendiente
+## Estructura del repositorio
 
-Este proyecto se ha preparado como código fuente, pero debe compilarse y ejecutarse en una instalación real de EMU8086 antes de entregarse. Se comprobaron las dimensiones y conectividad de los mapas por análisis estático, no la ejecución en el emulador.
+```text
+Proyecto2_Laberinto_EIF205/
+├── LABERINTO.ASM
+├── README.md
+└── docs/
+    ├── Informe_Tecnico_Proyecto2.pdf
+    └── Bitacora_Pruebas.md
+```
 
-Git (obligatorio)
+## Estado del proyecto
 
-Crear un repositorio e ir haciendo commits reales de ambos integrantes, por ejemplo al añadir mapas, movimiento, puntuación, pruebas y documentación. No inventar un historial de trabajo.
-
-
-
+El juego se encuentra implementado y fue probado en EMU8086. Las funciones principales respondieron correctamente en las pruebas registradas.
