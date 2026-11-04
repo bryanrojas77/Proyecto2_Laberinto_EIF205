@@ -60,6 +60,23 @@ txtGana db 13,10,'GANASTE: completaste los 3 niveles.',13,10,'$'
 txtBorrarLinea db '                                                            $'
 txtFinal db 'R = volver a jugar, Q = menu principal',13,10,'$'
 
+; ------------------- MACROS -------------------
+; Simplifican secuencias repetitivas de salida sin cambiar la logica del juego.
+
+; Imprime una cadena terminada en '$'.
+MOSTRAR_TEXTO MACRO mensaje
+    lea dx, mensaje
+    call escribir
+ENDM
+
+; Imprime retorno de carro y salto de linea.
+SALTO_LINEA MACRO
+    mov dl, 13
+    call imprimir_caracter
+    mov dl, 10
+    call imprimir_caracter
+ENDM
+
 .code
 inicio:
     mov ax, @data
@@ -68,10 +85,8 @@ inicio:
 
 menu:
     call limpiar_pantalla
-    lea dx, menu1
-    call escribir
-    lea dx, menu2
-    call escribir
+    MOSTRAR_TEXTO menu1
+    MOSTRAR_TEXTO menu2
     call leer_tecla
     cmp al, '1'
     je nueva_partida
@@ -116,8 +131,7 @@ verificar_estado:
     jmp juego
 
 pausar:
-    lea dx, txtPausa
-    call escribir
+    MOSTRAR_TEXTO txtPausa
 espera_pausa:
     call leer_tecla
     cmp al, 'p'
@@ -127,18 +141,15 @@ espera_pausa:
 
 derrota:
     call mostrar_juego
-    lea dx, txtPierde
-    call escribir
+    MOSTRAR_TEXTO txtPierde
     jmp opciones_final
 
 victoria:
     call mostrar_juego
-    lea dx, txtGana
-    call escribir
+    MOSTRAR_TEXTO txtGana
 
 opciones_final:
-    lea dx, txtFinal
-    call escribir
+    MOSTRAR_TEXTO txtFinal
 esperar_final:
     call leer_tecla
     cmp al, 'r'
@@ -217,8 +228,7 @@ mostrar_juego proc
     push dx
     push si
     call limpiar_pantalla
-    lea dx, titulo
-    call escribir
+    MOSTRAR_TEXTO titulo
     call mostrar_marcador
     mov si, offset tablero
     xor bx, bx
@@ -243,8 +253,7 @@ celda_lista:
     call imprimir_caracter
 siguiente_celda:
     loop pintar_celda
-    lea dx, txtAyuda
-    call escribir
+    MOSTRAR_TEXTO txtAyuda
     pop si
     pop dx
     pop cx
@@ -257,33 +266,25 @@ mostrar_juego endp
 mostrar_marcador proc
     push ax
     push dx
-    lea dx, txtNivel
-    call escribir
+    MOSTRAR_TEXTO txtNivel
     xor ax, ax
     mov al, nivel
     call imprimir_numero
-    lea dx, txtPuntos
-    call escribir
+    MOSTRAR_TEXTO txtPuntos
     mov ax, puntos
     call imprimir_numero
-    lea dx, txtRecord
-    call escribir
+    MOSTRAR_TEXTO txtRecord
     mov ax, record
     call imprimir_numero
-    lea dx, txtMov
-    call escribir
+    MOSTRAR_TEXTO txtMov
     xor ax, ax
     mov al, movimientos
     call imprimir_numero
-    lea dx, txtMonedas
-    call escribir
+    MOSTRAR_TEXTO txtMonedas
     xor ax, ax
     mov al, monedas
     call imprimir_numero
-    mov dl, 13
-    call imprimir_caracter
-    mov dl, 10
-    call imprimir_caracter
+    SALTO_LINEA
     pop dx
     pop ax
     ret
@@ -338,13 +339,11 @@ actualizar_movimiento proc
     mov dh, 1
     mov dl, 0
     call posicionar_cursor
-    lea dx, txtBorrarLinea
-    call escribir
+    MOSTRAR_TEXTO txtBorrarLinea
     mov dh, 2
     mov dl, 0
     call posicionar_cursor
-    lea dx, txtBorrarLinea
-    call escribir
+    MOSTRAR_TEXTO txtBorrarLinea
     mov dh, 1
     mov dl, 0
     call posicionar_cursor
