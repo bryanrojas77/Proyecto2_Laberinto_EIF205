@@ -1,6 +1,6 @@
 # Bitácora de pruebas - Proyecto 2 Laberinto EIF205
 
-## Entorno de pruebas
+# Entorno de pruebas
 
 Las pruebas fueron realizadas en EMU8086 utilizando la versión funcional de `LABERINTO.ASM`.
 
